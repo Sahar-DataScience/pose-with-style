@@ -1,10 +1,9 @@
-# Pose with Style: Detail-Preserving Pose-Guided Image Synthesis with Conditional StyleGAN
-### [[Paper](https://pose-with-style.github.io/asset/paper.pdf)] [[Project Website](https://pose-with-style.github.io/)] [[Output resutls](https://pose-with-style.github.io/results.html)]
-
-Official Pytorch implementation for **Pose with Style: Detail-Preserving Pose-Guided Image Synthesis with Conditional StyleGAN**. Please contact Badour AlBahar (badour@vt.edu) if you have any questions.
+# Garment transfer and pose transfer using infrence mode of [pose with style](https://pose-with-style.github.io)
 
 <p align='center'>
-<img src='https://pose-with-style.github.io/images/teaser.jpg' width='900'/>
+<img src='https://github.com/Sahar-DataScience/pose-with-style/blob/main/data/resized_img.png' width='30%'/>
+<img src='https://github.com/Sahar-DataScience/pose-with-style/blob/main/data/fashionWOMENSkirtsid0000177102_1front.png' width='30%'/>
+<img src='https://github.com/Sahar-DataScience/pose-with-style/blob/main/data/output/fashionWOMENSkirtsid0000177102_1front_and_resized_img_upper_body_vis.png' width='30%'/>
 </p>
 
 
@@ -50,55 +49,6 @@ To use your own images you need to put the input image (input_name+'.png'), dens
 python garment_transfer.py --input_path ./data --input_name fashionWOMENSkirtsid0000177102_1front --target_name fashionWOMENBlouses_Shirtsid0000635004_1front --CCM_pretrained_model path/to/CCM_epoch50.pt --pretrained_model path/to/posewithstyle.pt --part upper_body
 ```
 
-## DeepFashion Dataset
-To train or test, you must download and process the dataset. Please follow instructions in [Dataset and Downloads](https://github.com/BadourAlBahar/pose-with-style/blob/main/DATASET.md).
-
-You should have the following downloaded in your `DATASET` folder:
-```
-DATASET/DeepFashion_highres
- - train
- - test
- - tools
-   - train.lst
-   - test.lst
-   - fashion-pairs-train.csv
-   - fashion-pairs-test.csv
-
-DATASET/densepose
- - train
- - test
-
-DATASET/silhouette
- - train
- - test
-
-DATASET/partial_coordinates
- - train
- - test
-
-DATASET/complete_coordinates
- - train
- - test
-
-DATASET/resources
- - train_face_T.pickle
- - sphere20a_20171020.pth
-```
-
-
-## Training
-Step 1: First, train the reposing model by focusing on generating the foreground.
-We set the batch size to 1 and train for 50 epochs. This training process takes around 7 days on 8 NVIDIA 2080 Ti GPUs.
-```
-python -m torch.distributed.launch --nproc_per_node=8 --master_port XXXX train.py --batch 1 /path/to/DATASET --name exp_name_step1 --size 512 --faceloss --epoch 50
-```
-The checkpoints will be saved in `checkpoint/exp_name`.
-
-Step 2: Then, finetune the model by training on the entire image (only masking the padded boundary).
-We set the batch size to 8 and train for 10 epochs. This training process takes less than 2 days on 2 A100 GPUs.
-```
-python -m torch.distributed.launch --nproc_per_node=2 --master_port XXXX train.py --batch 8 /path/to/DATASET --name exp_name_step2 --size 512 --faceloss --epoch 10 --ckpt /path/to/step1/pretrained/model --finetune
-```
 
 ## Testing
 To test the reposing model and generate the reposing results:
